@@ -1,0 +1,40 @@
+#if __GLASGOW_HASKELL__
+{-# INLINABLE fromDescListWith #-}
+#endif
+写库的自我修养？
+
+-
+
+> '₀'
+'\8320'
+> putStrLn $ take 11 ['₀'..]
+₀₁₂₃₄₅₆₇₈₉₊
+
+-
+
+http://hackage.haskell.org/package/containers-0.6.0.1/docs/Data-Map-Merge-Strict.html#v:merge
+Haskell 的 containers-0.6.0.1 的 Data.Map.Strict 的 merge 操作，一通研究。
+哎我这个学力和基础真是。
+不要排异呀……
+
+
+-
++ 这是错的！
+substituteMany m f1@(Fvar i1) = 
+    case Map.lookup i1 m of
+        i2 -> Fvar i2
+        _ -> f1
+
++ warning 让我省了些时间：
+/Users/sonion/dev/Haskell/HSFATP/src/HSFATP.hs:80:9: warning: [-Woverlapping-patterns]
+    Pattern match is redundant
+    In a case alternative: _ -> ...
+   |
+80 |         _ -> f1
+   |         ^^^^^^^
+
++ 正解为
+substituteMany m f1@(Fvar i1) = 
+    case Map.lookup i1 m of
+        Just i2 -> Fvar i2
+        Nothing -> f1
