@@ -78,6 +78,17 @@ substituteMany m (Nega f11) = Nega $ substituteMany m f11
 substituteMany m (f11 :~> f12) = substituteMany m f11 :~> substituteMany m f12
 -- 写着写着才觉得应该把 FormulaS 实现成 Functor。
 
+-- | 试图让 261735042 群某同学更明白
+-- 这是个二元函数，第一个参数是代换 s（s 是个定义域为命题变号集、值域为公式集的函数），第二个参数是要被代换的公式 X。输出代换之后的公式。
+substituteManyWithFunction :: (Id -> Maybe FormulaS) -> FormulaS -> FormulaS
+substituteManyWithFunction s f1@(Fvar i) = 
+    -- fromMaybe :: a -> Maybe a -> a 更简洁，但是展开手写让更多人能猜意思
+    case s i of
+        Just f2 -> f2
+        Nothing -> f1
+substituteManyWithFunction s (Nega f11) = Nega $ substituteManyWithFunction s f11
+substituteManyWithFunction s (f11 :~> f12) = substituteManyWithFunction s f11 :~> substituteManyWithFunction s f12
+
 -- | 对公式内的变元做换名，使得各个变元序号递增地第一次出现。
 -- 如输入 (Nega (Fvar 2) :~> Nega (Fvar 1)) :~> Fvar 1 :~> Fvar 2
 -- ，输出 (Nega (Fvar 1) :~> Nega (Fvar 2)) :~> Fvar 2 :~> Fvar 1
